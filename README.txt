@@ -7,5 +7,11 @@ their course in easy, fast, convenient way.
 	1.Under command/Terminal.
 	2.Can login ttu student information system successfully.
 
+2014/3/22 ASCS 0.2 Nightly Build:
+	1.Login Function Created
+	2.big5 decode
+	3.utf-8 decode
+	4.Can read selected list
+
 
 =========================================================================
