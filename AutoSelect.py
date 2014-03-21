@@ -2,30 +2,58 @@ import urllib.request
 import urllib.parse
 import urllib.response
 import http.cookiejar 
+import http.client
 
 ID = input("Please input student ID: ")
 PWD = input("Please input Password: ")
 
-url = "http://stucis.ttu.edu.tw/login.php"
 header = {"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1897.3 Safari/537.36"}
 data = {"ID": ID, "PWD": PWD, "Submit": "登入系統"}
 data = urllib.parse.urlencode(data)
 data = data.encode('big5')
 
-req = urllib.request.Request(url, data, header,None,None,'POST')	#POST訊息
-f = urllib.request.urlopen(req) 
-cookie = f.getheader('Set-Cookie')	#get cookie
-print ("the cookies are: ")
-print(cookie)
+#Login
+try:
+	h1 = http.client.HTTPConnection('stucis.ttu.edu.tw',80)
+	h1.request('GET' , '/login.php', None, header)
+	response = h1.getresponse()
+	print (response.status)
+	print (response.reason)
+	print (response.read())
+	print (response.getheaders())
+	cookie = response.getheader('Set-Cookie')
+	print (cookie)
+except (Exception, e):
+    print (e)
+    h1.close()
 
-header.update({'Cookie' : cookie})	#重組cookie
+#cookie split
+cookie = cookie.split()
+cookie = cookie[4].split(';')
+cookie = cookie[0]
+header.update({"Cookie" : cookie})
 print(header)
 
-ListSelected = "http://stucis.ttu.edu.tw/ListSelected.php"		#已選課程
+try:
+	h1.request('POST', '/login.php', data, header)
+	response = h1.getresponse()
+	print (response.status)
+	print (response.reason)
+	print (response.read())
+	print (response.getheaders())
+except (Exception, e):
+    print (e)
+    h1.close()
 
-req = urllib.request.Request(url,None,header,None,None,'GET')	#GET資料
-f = urllib.request.urlopen(req)
+h1.close()
 
-#尚未完成 處理資訊
-f = urllib.parse.unquote_to_bytes(f.read())
-print(f)
+#h1.request('GET', '/selcourse/ListSelected.php', None, header)
+#response = h1.getresponse()
+#print (response.status)
+#print (response.reason)
+#print (response.read())
+#print (response.getheaders())
+
+
+h1.close()
+
