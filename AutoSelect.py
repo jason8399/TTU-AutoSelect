@@ -3,6 +3,7 @@ import urllib.parse
 import urllib.response
 import http.cookiejar 
 import http.client
+import platform
 import os
 
 ########################################副程式區######################################################
@@ -10,7 +11,15 @@ def showMenu():
 	print("Welcome To Use ASCS for TTU")
 	print("Please Selected The function")
 	print("1.Read Selected Course")
+	print("2.Select Course Process")
 	print("5.Exit")
+
+def clrscr():
+	system = platform.system()
+	if(system.lower() == 'windows'):
+		os.system('cls')
+	elif(system.lower() == 'darwin'):
+		os.system('clear')
 
 def webDecodeBig5(web_string):			#web資料Decode BIG5
 	web_string = web_string.read()
@@ -30,7 +39,7 @@ def Login():
 		if ('登入錯誤' in webDecodeBig5(urllib.request.urlopen(req))):
 			print('登入錯誤')
 			x = True
-			os.system('clear')
+			clrscr()
 		else:
 			print('登入成功!!!!')
 			x = False
@@ -47,6 +56,24 @@ def readSelectedList():	#Select Course List
 	else:
 		print(web_string)
 
+def selectCourse():
+	flag = True
+	while(flag):
+		clrscr()
+		print("Please Check \"list.txt\" is under same folder")
+		input('任意鍵繼續......')
+		try:
+			selectList = open("list.txt")
+			flag = False
+		except (Exception):
+			print("Open \"list.txt\" fail.\nPlease Check Your file")
+			flag = True
+	print(selectList.readline())
+	print(selectList.readline())
+	print(selectList.readline())
+	print(selectList.readline())
+
+
 
 #########################################物件區######################################################
 url_login = 'http://stucis.ttu.edu.tw/login.php'
@@ -59,14 +86,16 @@ flag = True
 opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cookie)) #cookie處理
 urllib.request.install_opener(opener)
 
-os.system('clear')
+clrscr()
 Login()
 while True:
-	os.system('clear')
+	clrscr()
 	showMenu()
 	select = input('select = ')
 	if select == '1':
 		readSelectedList()
+	elif select == '2':
+		selectCourse()
 	elif select == '5':
 		print('\n\nGood Bye!!!!')
 		os._exit(0)
