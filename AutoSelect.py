@@ -66,27 +66,24 @@ def selectCourse():
 		try:
 			selectList = open("list.txt")
 			flag = False
-		except (Exception):
+		except Exception:
 			print("Open \"list.txt\" fail.\nPlease Check Your file")
 			flag = True
 	courseID = selectList.readlines()
-	print(courseID)
-	#for x in range(len(courseID)):
-	#	courseID[x] = courseID[x].strip('\n')
-	#for x in range(len(courseID)):
-	data = "AddSbjNo=%s" % courseID[0]
-	url_select1 = url_select % data
-	#data = urllib.parse.urlencode(data)
-	#data = data.encode('big5')
-	try:
-		req = urllib.request.Request(url_select1, None, header, None, None, 'GET')
-		u = urllib.request.urlopen(req)
-		web_string = webDecodeBig5(u)
-		print(u.status)
-		print(u.getheaders())
-		print(web_string)
-	except urllib.error.HTTPError as err:
-		print(err.reason)
+	for x in range(0, len(courseID)):
+		courseID[x] = courseID[x].strip('\n')
+	for x in range(0, len(courseID)):
+		selectID_url = url_select % ("AddSbjNo=%s" % courseID[x])
+		print(selectID_url)
+		try:
+			req = urllib.request.Request(selectID_url, None, header, None, None, 'GET')
+			u = urllib.request.urlopen(req)
+			web_string = webDecodeBig5(u)
+			print(u.status)
+			print(u.getheaders())
+			print(web_string)
+		except urllib.error.HTTPError as err:
+			print(err.reason)
 	
 	
 
