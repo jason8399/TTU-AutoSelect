@@ -36,6 +36,7 @@ def Login():
 		data = urllib.parse.urlencode(data)
 		data = data.encode('big5')
 		req = urllib.request.Request(url_login, data, header, None, None, 'POST')
+		print(urllib.request.urlopen(req).status)
 		if ('登入錯誤' in webDecodeBig5(urllib.request.urlopen(req))):
 			print('登入錯誤')
 			x = True
@@ -68,17 +69,33 @@ def selectCourse():
 		except (Exception):
 			print("Open \"list.txt\" fail.\nPlease Check Your file")
 			flag = True
-	print(selectList.readline())
-	print(selectList.readline())
-	print(selectList.readline())
-	print(selectList.readline())
+	courseID = selectList.readlines()
+	print(courseID)
+	#for x in range(len(courseID)):
+	#	courseID[x] = courseID[x].strip('\n')
+	#for x in range(len(courseID)):
+	data = "AddSbjNo=%s" % courseID[0]
+	url_select1 = url_select % data
+	#data = urllib.parse.urlencode(data)
+	#data = data.encode('big5')
+	try:
+		req = urllib.request.Request(url_select1, None, header, None, None, 'GET')
+		u = urllib.request.urlopen(req)
+		web_string = webDecodeBig5(u)
+		print(u.status)
+		print(u.getheaders())
+		print(web_string)
+	except urllib.error.HTTPError as err:
+		print(err.reason)
+	
+	
 
 
 
 #########################################物件區######################################################
 url_login = 'http://stucis.ttu.edu.tw/login.php'
 url_listed = 'http://stucis.ttu.edu.tw/selcourse/ListSelected.php'
-
+url_select = 'http://stucis.ttu.edu.tw/selcourse/DoAddDelSbj.php?%s'
 header = {"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1897.3 Safari/537.36"}
 cookie = http.cookiejar.CookieJar()
 flag = True
