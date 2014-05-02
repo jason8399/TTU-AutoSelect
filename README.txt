@@ -12,6 +12,9 @@ their course in easy, fast, convenient way.
 	2.big5 decode
 	3.utf-8 decode
 	4.Can read selected list
-
+2014/5/2  ASCS 1.0ver:
+	1.Select Course Function finish
+	2.CountDown Function finish
+	3.read selected list(beta)
 
 =========================================================================
