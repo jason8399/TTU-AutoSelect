@@ -11,7 +11,7 @@ import time
 def showMenu():
 	print("Welcome To Use ASCS for TTU")
 	print("Please Selected The function")
-	print("1.Read Selected Course")
+	print("1.Read Selected Course <dev>")
 	print("2.Select Course Process")
 	print("5.Exit")
 
@@ -35,9 +35,9 @@ def Login():
 		data = urllib.parse.urlencode(data)
 		data = data.encode('big5')
 		req = urllib.request.Request(url_login, data, header, None, None, 'POST')
-		print(urllib.request.urlopen(req).getheaders())
+		#print(urllib.request.urlopen(req).getheaders())
 		######
-		print(time.strftime("%a, %d %b %Y %H:%M:%S", time.gmtime()) + ' GMT')
+		#print(time.strftime("%a, %d %b %Y %H:%M:%S", time.gmtime()) + ' GMT')
 		######
 		if ('登入錯誤' in webDecodeBig5(urllib.request.urlopen(req))):
 			print('登入錯誤')
@@ -79,7 +79,7 @@ def selectCourse():
 		settime()
 	for x in range(0, len(courseID)):
 		selectID_url = url_select + "AddSbjNo=" + courseID[x]
-		print(selectID_url)
+		#print(selectID_url)
 		while(True):
 			try:
 				req = urllib.request.Request(selectID_url, None, header, None, None, 'GET')
