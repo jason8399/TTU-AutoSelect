@@ -3,7 +3,9 @@ This is a convenient system for TTU student to select their course in easy, fast
 
 ##What You Need:
 
-Just python3.3.5
+Just Python3.3.5
+
+[Download Python3.3.5](https://www.python.org/downloads/release/python-335/)
 
 ##HOW TO USE:
 
@@ -27,6 +29,11 @@ Windows:
 ```
 python Autoselect.py
 ```
+3.按照指示進行
+
+##免責聲明:
+
+此工具目前屬於開發階段，部分功能正常，使用者須承擔一切風險(我不保證能選上你所想要的課，中間有太多因素...)
 
 ##Changelog:
 ####2014/3/21 ASCS 0.1 Nightly Build:
@@ -54,3 +61,4 @@ python Autoselect.py
 3.read selected list(beta).
 
 ######by JasonPan
+
