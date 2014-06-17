@@ -70,6 +70,7 @@ def selectCourse():
 			flag = False
 		except Exception:
 			print("Open \"list.txt\" fail.\nPlease Check Your file")
+			input('任意鍵繼續......')
 			flag = True
 	courseID = selectList.readlines()
 	for x in range(0, len(courseID)):
@@ -86,7 +87,7 @@ def selectCourse():
 				u = urllib.request.urlopen(req)
 				web_string = webDecodeBig5(u)
 				print(u.status)
-				print(u.getheaders())
+				#print(u.getheaders())
 				print(web_string)
 				print("Select suecced")
 				break
