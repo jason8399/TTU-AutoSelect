@@ -11,8 +11,8 @@ import time
 def showMenu():
 	print("Welcome To Use ASCS for TTU")
 	print("Please Selected The function")
-	print("1.Read Selected Course <dev>")
-	print("2.Select Course Process")
+	print("1.Select Course Process")
+	print("2.Read Selected Course <dev>")
 	print("5.Exit")
 
 def clrscr():
@@ -102,6 +102,8 @@ def settime():
 		user_Time_Str += " GMT +0800"
 		try:
 			time_set = time.strptime(user_Time_Str, "%Y/%m/%d %H:%M:%S %Z %z")
+			if time_set < time.localtime():
+				continue
 			flag = False
 		except Exception:
 			print("Set time ERROR\ntry again.")
@@ -110,7 +112,7 @@ def settime():
 		time_Temp = time.localtime()
 		while(True):
 			if(time_Temp < time.localtime()):
-				break;
+				break
 		clrscr()
 		print("Now Time Is  " + time.strftime("%Y/%m/%d %H:%M:%S", time.localtime()))
 		print("The Time Set " + time_set_str)
@@ -138,9 +140,9 @@ while True:
 	showMenu()
 	select = input('select = ')
 	if select == '1':
-		readSelectedList()
-	elif select == '2':
 		selectCourse()
+	elif select == '2':
+		readSelectedList()
 	elif select == '5':
 		print('\n\nGood Bye!!!!')
 		os._exit(0)
