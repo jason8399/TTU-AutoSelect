@@ -104,10 +104,10 @@ def settime():
 		try:
 			time_set = time.strptime(user_Time_Str, '%Y/%m/%d %H:%M:%S %Z %z')
 			if time_set < time.localtime():
-				continue
+				raise Exception
 			flag = False
 		except Exception:
-			print('Set time ERROR\ntry again.')
+			print('Set time ERROR\ntry again.\n')
 	time_set_str = time.strftime('%Y/%m/%d %H:%M:%S', time_set)
 	while(True):
 		time_Temp = time.localtime()
