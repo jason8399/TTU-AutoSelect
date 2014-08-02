@@ -103,12 +103,15 @@ def settime():
 		user_Time_Str += ' GMT +0800'
 		try:
 			time_set = time.strptime(user_Time_Str, '%Y/%m/%d %H:%M:%S %Z %z')
+			temp = list(time_set)
+			temp[5] += 3
+			time_set = time.struct_time(tuple(temp))
 			if time_set < time.localtime():
 				raise Exception
 			flag = False
 		except Exception:
 			print('Set time ERROR\ntry again.\n')
-	time_set_str = time.strftime('%Y/%m/%d %H:%M:%S', time_set)
+	time_set_str = time.strftime('%Y/%m/%d %H:%M:%S', time.strptime(user_Time_Str, '%Y/%m/%d %H:%M:%S %Z %z'))
 	while(True):
 		time_Temp = time.localtime()
 		while(True):
