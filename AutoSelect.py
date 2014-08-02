@@ -29,6 +29,8 @@ def webDecodeBig5(web_string):			#web資料Decode BIG5
 
 def Login():
 	x = True
+	global ID
+	global PWD
 	while x:
 		clrscr()
 		ID = input('Please input student ID: ')
@@ -126,9 +128,15 @@ def reflash():
 	u = urllib.request.urlopen(req)
 	web_string = webDecodeBig5(u)
 	if 'Not login or session expire!' in web_string:
-		print('You need to Login again........\n')
-		login()
+		relogin()
 
+def relogin():
+	global ID
+	global PWD
+	data = {'ID': ID, 'PWD': PWD, 'Submit': '登入系統'}
+	data = urllib.parse.urlencode(data)
+	data = data.encode('big5')
+	req = urllib.request.Request(url_login, data, header, None, None, 'POST')
 
 #########################################物件區######################################################
 url_login = 'http://stucis.ttu.edu.tw/login.php'
@@ -137,6 +145,8 @@ url_select = 'http://stucis.ttu.edu.tw/selcourse/DoAddDelSbj.php?'
 header = {'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1897.3 Safari/537.36'}
 cookie = http.cookiejar.CookieJar()
 flag = True
+ID = ''
+PWD = ''
 ########################################主程式區######################################################
 opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cookie)) #cookie處理
 urllib.request.install_opener(opener)
