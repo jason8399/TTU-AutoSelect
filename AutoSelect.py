@@ -81,10 +81,10 @@ def selectCourse():
 	YN = input('Do you want use CountDown function?(y/n)\n')
 	if YN == 'Y' or YN == 'y':
 		settime()
-	for x in range(0, len(courseID)):
-		selectID_url = url_select + 'AddSbjNo=' + courseID[x]
-		#print(selectID_url)
-		while True:
+	while True:
+		for x in range(0, len(courseID)):
+			selectID_url = url_select + 'AddSbjNo=' + courseID[x]
+			#print(selectID_url)
 			try:
 				req = urllib.request.Request(selectID_url, None, header, None, None, 'GET')
 				u = urllib.request.urlopen(req)
@@ -93,11 +93,9 @@ def selectCourse():
 				#print(u.getheaders())
 				print(web_string)
 				print('Select suecced')
-				break
 			except urllib.error.HTTPError as err:
 				print(err.reason)
-				print('retry select ' + courseID[x])
-	
+		
 def settime():
 	while True:
 		user_Time_Str = input('Please input YYYY/MM/DD HH:MM:SS\n')
@@ -128,6 +126,7 @@ def reflash():
 	u = urllib.request.urlopen(req)
 	web_string = webDecodeBig5(u)
 	if 'Not login or session expire!' in web_string:
+		print('relogin')
 		relogin()
 
 def relogin():
@@ -137,6 +136,7 @@ def relogin():
 	data = urllib.parse.urlencode(data)
 	data = data.encode('big5')
 	req = urllib.request.Request(url_login, data, header, None, None, 'POST')
+	urllib.request.urlopen(req)
 
 #########################################物件區######################################################
 url_login = 'http://stucis.ttu.edu.tw/login.php'
