@@ -1,165 +1,73 @@
 # -*- coding: utf-8 -*-
-import urllib.request
-import urllib.parse
-import urllib.response
-import http.cookiejar 
-import http.client
-import platform
-import os
-import time
+import requests
+import requests.models
 import getpass
-########################################副程式區######################################################
-def showMenu():
-	print('Welcome To Use ASCS for TTU')
-	print('Please Selected The function')
-	print('1.Select Course Process')
-	print('2.Read Selected Course <dev>')
-	print('5.Exit')
+import time
 
-def clrscr():
-	system = platform.system()
-	if system.lower() == 'windows':
-		os.system('cls')
-	elif system.lower() == 'darwin':
-		os.system('clear')
 
-def webDecodeBig5(web_string):			#web資料Decode BIG5
-	web_string = web_string.read()
-	return web_string.decode('big5')
+class AutoSelect:
+    urlLogin = "http://stucis.ttu.edu.tw/login.php"
+    urlListed = "http://stucis.ttu.edu.tw/selcourse/ListSelected.php"
+    urlSelect = "http://stucis.ttu.edu.tw/selcourse/DoAddDelSbj.php"
+    headers = {"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1897.3 Safari/537.36"}
+    response = ""
+    cookies = ""
+    __courseList = ""
+    __id = ""
+    __pwd = ""
 
-def Login():
-	x = True
-	global ID
-	global PWD
-	while x:
-		clrscr()
-		ID = input('Please input student ID: ')
-		PWD = getpass.getpass('Please input Password: ')
-		data = {'ID': ID, 'PWD': PWD, 'Submit': '登入系統'}
-		data = urllib.parse.urlencode(data)
-		data = data.encode('big5')
-		req = urllib.request.Request(url_login, data, header, None, None, 'POST')
-		#print(urllib.request.urlopen(req).getheaders())
-		######
-		#print(time.strftime('%a, %d %b %Y %H:%M:%S', time.gmtime()) + ' GMT')
-		######
-		if '登入錯誤' in webDecodeBig5(urllib.request.urlopen(req)):
-			print('failed')
-			x = True
-		else:
-			print('success!!!!')
-			x = False
-		input('Please press any key to continue......')
+    def __init__(self):
+        pass
 
-def readSelectedList():	#Select Course List
-	req = urllib.request.Request(url_listed, None, header, None, None, 'GET')
-	u = urllib.request.urlopen(req)
-	web_string = webDecodeBig5(urllib.request.urlopen(req))
-	if 'Not login or session expire!' in web_string:
-		print('You need to Login again........\n')
-		Login()
-		readSelectedList()
-	else:
-		print(web_string)
+    def login(self):
+        self.__id = input("Please input student ID: ")
+        self.__pwd = getpass.getpass("Please input Password: ")
+        data = {"ID": self.__id, "PWD": self.__pwd, "Submit": "登入系統"}
+        self.response = requests.post(self.urlLogin, data=data, headers=self.headers)
+        if "登入錯誤" in self.web_decode():
+            print("Login failed")
+            self.login()
+        else:
+            print("Login success!!!!")
+            self.cookies = self.response.cookies
 
-def selectCourse():
-	flag = True
-	while flag:
-		clrscr()
-		print('Please Check "list.txt" is under same folder')
-		input('Please press any key to continue......')
-		try:
-			selectList = open('list.txt')
-			flag = False
-		except Exception:
-			print('Open "list.txt" fail.\nPlease Check Your file')
-			input('Please press any key to continue......')
-			flag = True
-	courseID = selectList.readlines()
-	for x in range(0, len(courseID)):
-		courseID[x] = courseID[x].strip('\n')
-	YN = input('Do you want use CountDown function?(y/n)\n')
-	if YN == 'Y' or YN == 'y':
-		settime()
-	while True:
-		for x in range(0, len(courseID)):
-			selectID_url = url_select + 'AddSbjNo=' + courseID[x]
-			#print(selectID_url)
-			try:
-				req = urllib.request.Request(selectID_url, None, header, None, None, 'GET')
-				u = urllib.request.urlopen(req)
-				web_string = webDecodeBig5(u)
-				print(u.status)
-				#print(u.getheaders())
-				print(web_string)
-				print('Select suecced')
-			except urllib.error.HTTPError as err:
-				print(err.reason)
-		
-def settime():
-	while True:
-		user_Time_Str = input('Please input YYYY/MM/DD HH:MM:SS\n')
-		user_Time_Str += ' GMT +0800'
-		try:
-			time_set = time.strptime(user_Time_Str, '%Y/%m/%d %H:%M:%S %Z %z')
-			if time_set < time.localtime():
-				raise Exception
-			break
-		except Exception:
-			print('Set time ERROR\ntry again.\n')
-	time_set_str = time.strftime('%Y/%m/%d %H:%M:%S', time_set)
-	while True:
-		time_Temp = time.localtime()
-		while True:
-			if(time_Temp < time.localtime()):
-				break
-		clrscr()
-		print('Now Time Is  ' + time.strftime('%Y/%m/%d %H:%M:%S', time.localtime()))
-		print('The Time Set ' + time_set_str)
-		reflash()
-		if time.localtime() > time_set:
-			break;
-	print('time up!!!!!!')
+    def web_decode(self):
+        web_string = self.response.text
+        web_string = web_string.encode(self.response.encoding)
+        return web_string.decode("big5")
 
-def reflash():
-	req = urllib.request.Request(url_listed, None, header, None, None, 'GET')
-	u = urllib.request.urlopen(req)
-	web_string = webDecodeBig5(u)
-	if 'Not login or session expire!' in web_string:
-		print('relogin')
-		relogin()
+    def open_file(self):
+        print("Please Check "list.txt" is under same folder")
+        input("Please press any key to continue......")
+        try:
+            file = open("list.txt")
+        except FileNotFoundError:
+            print("File Not Found!!")
+            exit(0)
+        self.__courseList = file.readlines()
+        for x in range(0, len(self.__courseList)):
+            self.__courseList[x] = self.__courseList[x].strip("\n")
 
-def relogin():
-	global ID
-	global PWD
-	data = {'ID': ID, 'PWD': PWD, 'Submit': '登入系統'}
-	data = urllib.parse.urlencode(data)
-	data = data.encode('big5')
-	req = urllib.request.Request(url_login, data, header, None, None, 'POST')
-	urllib.request.urlopen(req)
+    def do_select(self):
+        self.response = requests.get(self.urlListed, headers=self.headers, cookies=self.cookies)
+        for y in range(0, 10):
+            for x in range(0, len(self.__courseList)):
+                params = {"AddSbjNo": self.__courseList[x]}
+                try:
+                    self.response = requests.get(self.urlSelect, params=params, headers=self.headers,
+                                                 cookies=self.cookies)
+                except TimeoutError:
+                    pass
+                print(self.response.status_code)
+                time.sleep(1)
 
-#########################################物件區######################################################
-url_login = 'http://stucis.ttu.edu.tw/login.php'
-url_listed = 'http://stucis.ttu.edu.tw/selcourse/ListSelected.php'
-url_select = 'http://stucis.ttu.edu.tw/selcourse/DoAddDelSbj.php?'
-header = {'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1897.3 Safari/537.36'}
-cookie = http.cookiejar.CookieJar()
-flag = True
-ID = ''
-PWD = ''
-########################################主程式區######################################################
-opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cookie)) #cookie處理
-urllib.request.install_opener(opener)
+    def check_time(self):
+        #unavailable
+        pass
 
-Login()
-while True:
-	clrscr()
-	showMenu()
-	select = input('select = ')
-	if select == '1':
-		selectCourse()
-	elif select == '2':
-		readSelectedList()
-	elif select == '5':
-		print('\n\nGood Bye!!!!')
-		os._exit(0)
+
+if __name__ == "__main__":
+    auto = AutoSelect()
+    auto.login()
+    auto.open_file()
+    auto.do_select()
