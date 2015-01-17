@@ -3,9 +3,11 @@ This is a convenient system for TTU student to select their course in easy, fast
 
 ##What You Need:
 
-Just Python3.3.5
+Python3.3.5 & requests
 
 [Download Python3.3.5](https://www.python.org/downloads/release/python-335/)
+
+[Install requests](http://docs.python-requests.org/en/latest/)
 
 ##HOW TO USE:
 
@@ -38,27 +40,32 @@ python Autoselect.py
 ##Changelog:
 ####2014/3/21 ASCS 0.1 Nightly Build:
 
-1.Under command/Terminal.
-
-2.Can login ttu student information system successfully.
+1. Under command/Terminal.
+2. Can login ttu student information system successfully.
 
 ####2014/3/22 ASCS 0.2 Nightly Build:
 
-1.Login Function Created.
-
-2.big5 decode.
-
-3.utf-8 decode.
-
-4.Can read selected list.
+1. Login Function Created.
+2. big5 decode.
+3. utf-8 decode.
+4. Can read selected list.
 
 ####2014/5/2  ASCS 1.0ver:
 
-1.Select Course Function finish.
+1. Select Course Function finish.
+2. CountDown Function finish.
+3. read selected list(beta).
 
-2.CountDown Function finish.
+####2015/1/18 ASCS by requests 1.0 ver.
 
-3.read selected list(beta).
+1. Change urllib to requests
+2. CountDown function is unavailable now(it will be fixed)
+
+####2015/1/18 ASCS 1.1ver.
+
+1. Can't select course problem fixed
+2. Syntax fix
+
 
 ######by JasonPan
 
