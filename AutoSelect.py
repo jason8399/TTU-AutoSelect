@@ -37,7 +37,7 @@ class AutoSelect:
         return web_string.decode("big5")
 
     def open_file(self):
-        print("Please Check "list.txt" is under same folder")
+        print("Please Check 'list.txt' is under same folder")
         input("Please press any key to continue......")
         try:
             file = open("list.txt")
