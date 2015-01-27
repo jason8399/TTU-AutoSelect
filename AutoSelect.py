@@ -6,17 +6,18 @@ import time
 
 
 class AutoSelect:
-    urlLogin = "http://stucis.ttu.edu.tw/login.php"
-    urlListed = "http://stucis.ttu.edu.tw/selcourse/ListSelected.php"
-    urlSelect = "http://stucis.ttu.edu.tw/selcourse/DoAddDelSbj.php"
-    headers = {"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1897.3 Safari/537.36"}
-    response = ""
-    cookies = ""
-    __courseList = ""
-    __id = ""
-    __pwd = ""
 
     def __init__(self):
+        self.urlLogin = "http://stucis.ttu.edu.tw/login.php"
+        self.urlListed = "http://stucis.ttu.edu.tw/selcourse/ListClassCourse.php"
+        self.urlSelect = "http://stucis.ttu.edu.tw/selcourse/DoAddDelSbj.php"
+        self.urlSeltop = "http://stucis.ttu.edu.tw/menu/seltop.php"
+        self.headers = {"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1897.3 Safari/537.36"}
+        self.response = ""
+        self.cookies = ""
+        self.__courseList = ""
+        self.__id = ""
+        self.__pwd = ""
         pass
 
     def login(self):
@@ -49,6 +50,7 @@ class AutoSelect:
             self.__courseList[x] = self.__courseList[x].strip("\n")
 
     def do_select(self):
+        self.response = requests.get(self.urlSeltop, headers=self.headers, cookies=self.cookies)
         self.response = requests.get(self.urlListed, headers=self.headers, cookies=self.cookies)
         for y in range(0, 10):
             for x in range(0, len(self.__courseList)):
