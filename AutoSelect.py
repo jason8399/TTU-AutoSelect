@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
+import threading
 import requests
 import requests.models
 import getpass
 import time
+from multiprocessing import Process, Pool
 
 
 class AutoSelect:
@@ -15,7 +17,7 @@ class AutoSelect:
         self.headers = {"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1897.3 Safari/537.36"}
         self.response = ""
         self.cookies = ""
-        self.__courseList = ""
+        self.courseList = ""
         self.__id = ""
         self.__pwd = ""
         pass
@@ -45,26 +47,39 @@ class AutoSelect:
         except FileNotFoundError:
             print("File Not Found!!")
             exit(0)
-        self.__courseList = file.readlines()
-        for x in range(0, len(self.__courseList)):
-            self.__courseList[x] = self.__courseList[x].strip("\n")
+        self.courseList = file.readlines()
+        for x in range(0, len(self.courseList)):
+            self.courseList[x] = self.courseList[x].strip("\n")
 
     def do_select(self):
         self.response = requests.get(self.urlSeltop, headers=self.headers, cookies=self.cookies)
         self.response = requests.get(self.urlListed, headers=self.headers, cookies=self.cookies)
-        for y in range(0, 10):
-            for courseId in self.__courseList:
+        for y in range(2):
+            for courseId in self.courseList:
                 params = {"AddSbjNo": courseId}
+                test = self.Select(self, params)
+                test.start()
+
+    class Select(threading.Thread):
+        def __init__(self, outter, params):
+            threading.Thread.__init__(self)
+            self.params = params
+            self.outter = outter
+
+        def run(self):
+            while True:
                 try:
-                    self.response = requests.get(self.urlSelect, params=params, headers=self.headers,
-                                                 cookies=self.cookies)
-                except TimeoutError:
+                    self.response = requests.get(self.outter.urlSelect, params=self.params, headers=self.outter.headers,
+                                                 cookies=self.outter.cookies, timeout=3)
+                    print(self.response.status_code)
+                except requests.exceptions.Timeout:
+                    print("TIMEOUT" + str(self.params))
                     pass
-                print(self.response.status_code)
 
     def check_time(self):
         #unavailable
         pass
+
 
 if __name__ == "__main__":
     auto = AutoSelect()
