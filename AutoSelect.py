@@ -1,60 +1,48 @@
 # -*- coding: utf-8 -*-
 import threading
 import requests
-import requests.models
-import getpass
 import time
-from multiprocessing import Process, Pool
+import configparser
 
 
 class AutoSelect:
 
     def __init__(self):
-        self.urlLogin = "http://stucis.ttu.edu.tw/login.php"
-        self.urlListed = "http://stucis.ttu.edu.tw/selcourse/ListClassCourse.php"
-        self.urlSelect = "http://stucis.ttu.edu.tw/selcourse/DoAddDelSbj.php"
-        self.urlSeltop = "http://stucis.ttu.edu.tw/menu/seltop.php"
+        self.urlLogin = "https://stucis.ttu.edu.tw/login.php"
+        self.urlListed = "https://stucis.ttu.edu.tw/selcourse/ListClassCourse.php"
+        self.urlSelect = "https://stucis.ttu.edu.tw/selcourse/DoAddDelSbj.php"
+        self.urlSeltop = "https://stucis.ttu.edu.tw/menu/seltop.php"
         self.headers = {"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1897.3 Safari/537.36"}
         self.response = ""
         self.cookies = ""
-        self.courseList = ""
-        self.__id = ""
-        self.__pwd = ""
+        self.config = configparser.ConfigParser()
+        self.config.read("config.conf")
+        self.courseList = eval(self.config["DEFAULT"]["CourseList"])
+        self.__id = self.config["DEFAULT"]["Account"]
+        self.__pwd = self.config["DEFAULT"]["Password"]
+        self.time = self.config["DEFAULT"]["Time"]
+        self.thread_num = int(self.config["DEFAULT"]["Thread"])
         pass
 
     def login(self):
-        self.__id = input("Please input student ID: ")
-        self.__pwd = getpass.getpass("Please input Password: ")
         data = {"ID": self.__id, "PWD": self.__pwd, "Submit": "登入系統"}
-        self.response = requests.post(self.urlLogin, data=data, headers=self.headers)
-        if "登入錯誤" in self.web_decode():
-            print("Login failed")
-            self.login()
-        else:
-            print("Login success!!!!")
-            self.cookies = self.response.cookies
-
-    def web_decode(self):
-        web_string = self.response.text
-        web_string = web_string.encode(self.response.encoding)
-        return web_string.decode("big5")
-
-    def open_file(self):
-        print("Please Check 'list.txt' is under same folder")
-        input("Please press any key to continue......")
-        try:
-            file = open("list.txt")
-        except FileNotFoundError:
-            print("File Not Found!!")
-            exit(0)
-        self.courseList = file.readlines()
-        for x in range(0, len(self.courseList)):
-            self.courseList[x] = self.courseList[x].strip("\n")
+        web_decode = lambda self : self.response.text.encode(self.response.encoding).decode("big5")
+        while True:
+            try:
+                self.response = requests.post(self.urlLogin, data=data, headers=self.headers, timeout=3)
+                if "登入錯誤" in web_decode(self):
+                    print("Login failed")
+                else:
+                    print("Login success!!!!")
+                    self.cookies = self.response.cookies
+                    break
+            except requests.exceptions.Timeout:
+                print("LOGIN_TIMEOUT!")
 
     def do_select(self):
         self.response = requests.get(self.urlSeltop, headers=self.headers, cookies=self.cookies)
         self.response = requests.get(self.urlListed, headers=self.headers, cookies=self.cookies)
-        for y in range(2):
+        for y in range(self.thread_num):
             for courseId in self.courseList:
                 params = {"AddSbjNo": courseId}
                 test = self.Select(self, params)
@@ -77,12 +65,18 @@ class AutoSelect:
                     pass
 
     def check_time(self):
-        #unavailable
+        self.time = time.mktime(time.strptime(self.time, '%Y/%m/%d %H:%M:%S'))
+        print("Waiting...")
+        while True:
+            now_time = time.mktime(time.localtime())
+            if now_time >= self.time:
+                break
+        print("Start!")
         pass
 
 
 if __name__ == "__main__":
     auto = AutoSelect()
+    auto.check_time()
     auto.login()
-    auto.open_file()
     auto.do_select()
