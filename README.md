@@ -3,22 +3,19 @@ This is a convenient system for TTU student to select their course in easy, fast
 
 ##What You Need:
 
-Python3.3.5 & requests
+Python3.5.1 & requests
 
-[Download Python3.3.5](https://www.python.org/downloads/release/python-335/)
+[Download Python3.5.1](https://www.python.org/downloads/release/python-351/)
 
 [Install requests](http://docs.python-requests.org/en/latest/)
 
 ##HOW TO USE:
 
-1.請先將你想選取的課程代碼，利用notepad建立成list.txt，並將之至於Autoselect.py同目錄
+1.請先將你想選取的課程代碼，利用notepad建立成寫入config.conf檔，並將之至於Autoselect.py同目錄
 
 EX:
 ```
-G1410A
-G1410B
-G1430G
-G1612O
+CourseList = ["G1410A","G1410B","G1430G","G1612O"]
 ...
 ```
 2.執行，在命令提示字元或終端機下輸入:
@@ -60,6 +57,11 @@ python Autoselect.py
 
 1. Change urllib to requests
 2. CountDown function is unavailable now(it will be fixed)
+
+####2016/1/21 ASCS by requests 2.0 ver.
+1. Add read configuer file.
+2. Fix countdown function.
+3. Multithreading programing
 
 ######by JasonPan
 
