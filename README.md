@@ -1,5 +1,5 @@
 #Auto Select Course System For TTU
-This is a convenient system for TTU student to select their course in easy, fast, convenient way.
+This is a convenient system for TTU students to select their courses in an easy, fast, convenient way.
 
 ##What You Need:
 
