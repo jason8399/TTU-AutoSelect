@@ -22,6 +22,7 @@ class AutoSelect:
         self.__pwd = self.config["DEFAULT"]["Password"]
         self.time = self.config["DEFAULT"]["Time"]
         self.thread_num = int(self.config["DEFAULT"]["Thread"])
+        requests.packages.urllib3.disable_warnings()
         pass
 
     def login(self):
@@ -29,7 +30,7 @@ class AutoSelect:
         web_decode = lambda self : self.response.text.encode(self.response.encoding).decode("big5")
         while True:
             try:
-                self.response = requests.post(self.urlLogin, data=data, headers=self.headers, timeout=3)
+                self.response = requests.post(self.urlLogin, data=data, headers=self.headers, verify=False, timeout=3)
                 if "登入錯誤" in web_decode(self):
                     print("Login failed")
                 else:
@@ -40,8 +41,8 @@ class AutoSelect:
                 print("LOGIN_TIMEOUT!")
 
     def do_select(self):
-        self.response = requests.get(self.urlSeltop, headers=self.headers, cookies=self.cookies)
-        self.response = requests.get(self.urlListed, headers=self.headers, cookies=self.cookies)
+        self.response = requests.get(self.urlSeltop, headers=self.headers, cookies=self.cookies, verify=False)
+        self.response = requests.get(self.urlListed, headers=self.headers, cookies=self.cookies, verify=False)
         for y in range(self.thread_num):
             for courseId in self.courseList:
                 params = {"AddSbjNo": courseId}
@@ -58,7 +59,7 @@ class AutoSelect:
             while True:
                 try:
                     self.response = requests.get(self.outter.urlSelect, params=self.params, headers=self.outter.headers,
-                                                 cookies=self.outter.cookies, timeout=3)
+                                                 cookies=self.outter.cookies, verify=False, timeout=3)
                     print(self.response.status_code)
                 except requests.exceptions.Timeout:
                     print("TIMEOUT" + str(self.params))
