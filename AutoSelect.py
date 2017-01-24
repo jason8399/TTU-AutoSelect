@@ -52,22 +52,29 @@ class AutoSelect:
                     else:
                         print("[Thread %d]Login success!!!!" % self.thread_id)
                         self.cookies = self.response.cookies
+                        self.response = requests.get(self.outter.urlSeltop, headers=self.headers, cookies=self.cookies, verify=False)
+                        self.response = requests.get(self.outter.urlListed, headers=self.headers, cookies=self.cookies, verify=False)
                         break
                 except requests.exceptions.Timeout:
                     print("LOGIN_TIMEOUT!")
 
         def run(self):
-            self.response = requests.get(self.outter.urlSeltop, headers=self.headers, cookies=self.cookies, verify=False)
-            self.response = requests.get(self.outter.urlListed, headers=self.headers, cookies=self.cookies, verify=False)
             while True:
                 try:
                     self.response = requests.get(self.outter.urlSelect, params=self.params, headers=self.headers,
                                                  cookies=self.cookies, verify=False, timeout=3)
+                    self.cookies = self.response.cookies
                     print("[Thread %d]" % self.thread_id, self.response.status_code, self.params)
+                    print(self.response.url)
                     if "Not login or session expire!" in self.response.text:
                         self.login()
-                    else:
-                        time.sleep(1)
+                    if self.response.status_code == 404:
+                        self.login()
+                    if "RetCode" in self.response.url:
+                        if "RetCode=0" in self.response.url or "RetCode=2" in self.response.url:
+                            print("DONE!!! ", self.params)
+                            break
+                        time.sleep(10)
                 except requests.exceptions.Timeout:
                     print("[Thread %d]TIMEOUT" % self.thread_id + str(self.params))
                     pass
